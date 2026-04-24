@@ -3,11 +3,11 @@ import { Hospital, Mail, Phone, MapPin, User, AlertCircle, Activity, Users, Cale
   PlusCircle, Check, X, ClipboardList, RefreshCw, Trash2, KeyRound } from 'lucide-react';
 import './HospitalDashboard.css';
 
-const API = 'http://localhost:5000/api/auth/hospital';
+const API = `${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/auth/hospital`; // ✅ FIXED
 
 const SPECIALIZATIONS = [
-  "Cardiologist","Dermatologist","Endocrinologist","Gastroenterologist", "General Physician",
-  "Gynecologist","Nephrologist","Neurologist","Orthopedic Surgeon", "Otolaryngologist (ENT)",
+  "Cardiologist","Dermatologist","Endocrinologist","Gastroenterologist","General Physician",
+  "Gynecologist","Nephrologist","Neurologist","Orthopedic Surgeon","Otolaryngologist (ENT)",
   "Pediatrician","Psychiatrist","General Surgeon","Urologist","Dentist","Physiotherapist"
 ];
 
@@ -85,14 +85,11 @@ const HospitalDashboard = () => {
   useEffect(() => { fetchHospitalData(); fetchAppointments(); }, [fetchHospitalData, fetchAppointments]);
   useEffect(() => { if (activeTab === 'queue') fetchQueue(); }, [activeTab, fetchQueue]);
 
-  // ── Stats ─────────────────────────────────────────────────────────────────
   const handleSaveStats = async () => {
     setSaveLoading(true);
     try {
       const res = await fetch(`${API}/update-stats`, {
-        method: 'PUT',
-        headers: authHeaders(),
-        body: JSON.stringify(editedStats)
+        method: 'PUT', headers: authHeaders(), body: JSON.stringify(editedStats)
       });
       if (!res.ok) throw new Error('Failed to update stats');
       const updated = await res.json();
@@ -105,7 +102,6 @@ const HospitalDashboard = () => {
     }
   };
 
-  // ── Doctors ───────────────────────────────────────────────────────────────
   const handleSpecializationChange = (value) => {
     setNewDoctor(p => ({ ...p, specialization: value }));
     if (value.length > 0) {
@@ -155,7 +151,6 @@ const HospitalDashboard = () => {
     }
   };
 
-  // ── Appointments ──────────────────────────────────────────────────────────
   const handleAppointmentAction = async (id, action) => {
     try {
       const res = await fetch(`${API}/appointments/${id}/${action}`, {
@@ -170,16 +165,13 @@ const HospitalDashboard = () => {
     }
   };
 
-  // ── Queue ─────────────────────────────────────────────────────────────────
   const handleAddToQueue = async () => {
     if (!newQueueEntry.patientName || !newQueueEntry.doctorName) {
       setError('Patient name and doctor name are required'); return;
     }
     try {
       const res = await fetch(`${API}/queue/add`, {
-        method: 'POST',
-        headers: authHeaders(),
-        body: JSON.stringify(newQueueEntry)
+        method: 'POST', headers: authHeaders(), body: JSON.stringify(newQueueEntry)
       });
       if (!res.ok) throw new Error('Failed to add to queue');
       const data = await res.json();
@@ -195,9 +187,7 @@ const HospitalDashboard = () => {
   const handleQueueStatusChange = async (entryId, status) => {
     try {
       const res = await fetch(`${API}/queue/${entryId}`, {
-        method: 'PUT',
-        headers: authHeaders(),
-        body: JSON.stringify({ status })
+        method: 'PUT', headers: authHeaders(), body: JSON.stringify({ status })
       });
       if (!res.ok) throw new Error('Failed to update queue entry');
       const data = await res.json();
@@ -234,10 +224,8 @@ const HospitalDashboard = () => {
     }
   };
 
-  // ── Status badge colour ───────────────────────────────────────────────────
   const queueStatusColor = { Waiting: '#f57f17', 'In Progress': '#1565c0', Done: '#2e7d32', Skipped: '#888' };
 
-  // ─────────────────────────────────────────────────────────────────────────
   if (loading) return <div className="hd-loading"><div className="hd-spinner"></div><p>Loading…</p></div>;
 
   if (!hospitalData || !hospitalData.accepted) {
@@ -251,16 +239,16 @@ const HospitalDashboard = () => {
   }
 
   const tabs = [
-    { id: 'overview',      label: 'Overview',      icon: <Activity size={16} /> },
-    { id: 'doctors',       label: 'Doctors',        icon: <Stethoscope size={16} /> },
-    { id: 'appointments',  label: 'Appointments',   icon: <Calendar size={16} /> },
-    { id: 'queue',         label: 'Queue',          icon: <ClipboardList size={16} /> },
-    { id: 'beds',          label: 'Bed Availability', icon: <Bed size={16} /> },
+    { id: 'overview',     label: 'Overview',        icon: <Activity size={16} /> },
+    { id: 'doctors',      label: 'Doctors',          icon: <Stethoscope size={16} /> },
+    { id: 'appointments', label: 'Appointments',     icon: <Calendar size={16} /> },
+    { id: 'queue',        label: 'Queue',            icon: <ClipboardList size={16} /> },
+    { id: 'beds',         label: 'Bed Availability', icon: <Bed size={16} /> },
   ];
 
   return (
     <div className="hd-container">
-    <br/>
+      <br/>
       <div className="hd-header">
         <div>
           <h1 className="hd-title">Welcome, {hospitalData.hospitalName}</h1>
@@ -276,23 +264,17 @@ const HospitalDashboard = () => {
         </div>
       )}
 
-      {/* Tabs */}
       <div className="hd-tabs">
         {tabs.map(t => (
-          <button
-            key={t.id}
-            className={`hd-tab ${activeTab === t.id ? 'active' : ''}`}
-            onClick={() => setActiveTab(t.id)}
-          >
+          <button key={t.id} className={`hd-tab ${activeTab === t.id ? 'active' : ''}`}
+            onClick={() => setActiveTab(t.id)}>
             {t.icon} {t.label}
           </button>
         ))}
       </div>
 
-      {/* ── OVERVIEW ─────────────────────────────────────────────────────── */}
       {activeTab === 'overview' && (
         <div className="hd-content">
-          {/* Hospital Info */}
           <div className="hd-card">
             <h2 className="hd-card-title">Hospital Information</h2>
             {[
@@ -309,7 +291,6 @@ const HospitalDashboard = () => {
             ))}
           </div>
 
-          {/* Quick Stats */}
           <div className="hd-card">
             <div className="hd-card-title-row">
               <h2 className="hd-card-title">Quick Stats</h2>
@@ -336,13 +317,9 @@ const HospitalDashboard = () => {
                   {s.icon}
                   <p className="hd-stat-label">{s.label}</p>
                   {editMode ? (
-                    <input
-                      className="hd-stat-input"
-                      type="number"
-                      min="0"
+                    <input className="hd-stat-input" type="number" min="0"
                       value={editedStats[s.key] ?? 0}
-                      onChange={e => setEditedStats(p => ({ ...p, [s.key]: Number(e.target.value) }))}
-                    />
+                      onChange={e => setEditedStats(p => ({ ...p, [s.key]: Number(e.target.value) }))} />
                   ) : (
                     <p className="hd-stat-value">{hospitalData[s.key] ?? 0}</p>
                   )}
@@ -353,7 +330,6 @@ const HospitalDashboard = () => {
         </div>
       )}
 
-      {/* ── DOCTORS ──────────────────────────────────────────────────────── */}
       {activeTab === 'doctors' && (
         <div className="hd-card">
           <h2 className="hd-card-title">Doctors ({doctors.length})</h2>
@@ -371,24 +347,14 @@ const HospitalDashboard = () => {
               </div>
             ))}
           </div>
-
           <div className="hd-add-doctor-box">
             <h3 style={{ marginBottom: 14, fontSize: '1rem' }}>Add New Doctor</h3>
             <div className="hd-add-row">
-              <input
-                className="hd-input"
-                placeholder="Doctor Name *"
-                value={newDoctor.name}
-                onChange={e => setNewDoctor(p => ({ ...p, name: e.target.value }))}
-              />
+              <input className="hd-input" placeholder="Doctor Name *" value={newDoctor.name}
+                onChange={e => setNewDoctor(p => ({ ...p, name: e.target.value }))} />
               <div style={{ position: 'relative', flex: 1 }}>
-                <input
-                  className="hd-input"
-                  placeholder="Specialization *"
-                  value={newDoctor.specialization}
-                  onChange={e => handleSpecializationChange(e.target.value)}
-                  autoComplete="off"
-                />
+                <input className="hd-input" placeholder="Specialization *" value={newDoctor.specialization}
+                  onChange={e => handleSpecializationChange(e.target.value)} autoComplete="off" />
                 {specSuggestions.length > 0 && (
                   <div className="hd-spec-suggestions">
                     {specSuggestions.map((s, i) => (
@@ -401,27 +367,21 @@ const HospitalDashboard = () => {
                 )}
               </div>
             </div>
-
             <div className="hd-login-toggle">
               <label className="hd-toggle-label">
-                <input type="checkbox" checked={showLoginFields}
-                  onChange={e => setShowLoginFields(e.target.checked)} />
+                <input type="checkbox" checked={showLoginFields} onChange={e => setShowLoginFields(e.target.checked)} />
                 <KeyRound size={15} style={{ marginLeft: 8 }} />
-                Enable Doctor Login (doctor can log in with username & password)
+                Enable Doctor Login
               </label>
             </div>
-
             {showLoginFields && (
               <div className="hd-add-row" style={{ marginTop: 12 }}>
-                <input className="hd-input" placeholder="Username for doctor *"
-                  value={newDoctor.username}
+                <input className="hd-input" placeholder="Username for doctor *" value={newDoctor.username}
                   onChange={e => setNewDoctor(p => ({ ...p, username: e.target.value }))} />
-                <input className="hd-input" type="password" placeholder="Password for doctor *"
-                  value={newDoctor.password}
+                <input className="hd-input" type="password" placeholder="Password for doctor *" value={newDoctor.password}
                   onChange={e => setNewDoctor(p => ({ ...p, password: e.target.value }))} />
               </div>
             )}
-
             <button className="hd-btn hd-btn-primary" style={{ marginTop: 14 }} onClick={handleAddDoctor}>
               <PlusCircle size={16} /> Add Doctor
             </button>
@@ -429,14 +389,11 @@ const HospitalDashboard = () => {
         </div>
       )}
 
-      {/* ── APPOINTMENTS ─────────────────────────────────────────────────── */}
       {activeTab === 'appointments' && (
         <div className="hd-card">
           <div className="hd-card-title-row">
             <h2 className="hd-card-title">Appointments ({appointments.length})</h2>
-            <button className="hd-btn hd-btn-outline" onClick={fetchAppointments}>
-              <RefreshCw size={14} /> Refresh
-            </button>
+            <button className="hd-btn hd-btn-outline" onClick={fetchAppointments}><RefreshCw size={14} /> Refresh</button>
           </div>
           {appointmentMsg && <div className="hd-flash">{appointmentMsg}</div>}
           {appointments.length === 0 ? (
@@ -453,12 +410,8 @@ const HospitalDashboard = () => {
                   </div>
                   {appt.status === 'Pending' && (
                     <div className="hd-appt-actions">
-                      <button className="hd-icon-btn hd-icon-btn-success" onClick={() => handleAppointmentAction(appt._id, 'accept')} title="Accept">
-                        <Check size={16} />
-                      </button>
-                      <button className="hd-icon-btn hd-icon-btn-danger" onClick={() => handleAppointmentAction(appt._id, 'deny')} title="Deny">
-                        <X size={16} />
-                      </button>
+                      <button className="hd-icon-btn hd-icon-btn-success" onClick={() => handleAppointmentAction(appt._id, 'accept')} title="Accept"><Check size={16} /></button>
+                      <button className="hd-icon-btn hd-icon-btn-danger" onClick={() => handleAppointmentAction(appt._id, 'deny')} title="Deny"><X size={16} /></button>
                     </div>
                   )}
                 </div>
@@ -468,7 +421,6 @@ const HospitalDashboard = () => {
         </div>
       )}
 
-      {/* ── QUEUE ────────────────────────────────────────────────────────── */}
       {activeTab === 'queue' && (
         <div className="hd-card">
           <div className="hd-card-title-row">
@@ -478,42 +430,24 @@ const HospitalDashboard = () => {
               <button className="hd-btn hd-btn-danger-outline" onClick={handleClearQueue}><Trash2 size={14} /> Clear Done</button>
             </div>
           </div>
-
           {queueMsg && <div className="hd-flash">{queueMsg}</div>}
-
-          {/* Add to queue */}
           <div className="hd-queue-add-box">
             <h3>Add Patient to Queue</h3>
             <div className="hd-add-row">
-              <input
-                className="hd-input"
-                placeholder="Patient Name *"
-                value={newQueueEntry.patientName}
-                onChange={e => setNewQueueEntry(p => ({ ...p, patientName: e.target.value }))}
-              />
-              <input
-                className="hd-input"
-                placeholder="Phone (optional)"
-                value={newQueueEntry.patientPhone}
-                onChange={e => setNewQueueEntry(p => ({ ...p, patientPhone: e.target.value }))}
-              />
-              <select
-                className="hd-input"
-                value={newQueueEntry.doctorName}
-                onChange={e => setNewQueueEntry(p => ({ ...p, doctorName: e.target.value }))}
-              >
+              <input className="hd-input" placeholder="Patient Name *" value={newQueueEntry.patientName}
+                onChange={e => setNewQueueEntry(p => ({ ...p, patientName: e.target.value }))} />
+              <input className="hd-input" placeholder="Phone (optional)" value={newQueueEntry.patientPhone}
+                onChange={e => setNewQueueEntry(p => ({ ...p, patientPhone: e.target.value }))} />
+              <select className="hd-input" value={newQueueEntry.doctorName}
+                onChange={e => setNewQueueEntry(p => ({ ...p, doctorName: e.target.value }))}>
                 <option value="">Select Doctor *</option>
                 {doctors.map((d, i) => (
                   <option key={d._id || i} value={d.name}>{d.name} — {d.specialization}</option>
                 ))}
               </select>
-              <button className="hd-btn hd-btn-primary" onClick={handleAddToQueue}>
-                <PlusCircle size={16} /> Issue Token
-              </button>
+              <button className="hd-btn hd-btn-primary" onClick={handleAddToQueue}><PlusCircle size={16} /> Issue Token</button>
             </div>
           </div>
-
-          {/* Queue list */}
           {queue.length === 0 ? (
             <p className="hd-empty">Queue is empty.</p>
           ) : (
@@ -526,12 +460,9 @@ const HospitalDashboard = () => {
                     {entry.patientPhone && <span className="hd-queue-phone">{entry.patientPhone}</span>}
                     <span className="hd-queue-doctor">Dr. {entry.doctorName}</span>
                   </div>
-                  <select
-                    className="hd-queue-status-select"
-                    value={entry.status}
+                  <select className="hd-queue-status-select" value={entry.status}
                     style={{ borderColor: queueStatusColor[entry.status] }}
-                    onChange={e => handleQueueStatusChange(entry._id, e.target.value)}
-                  >
+                    onChange={e => handleQueueStatusChange(entry._id, e.target.value)}>
                     {['Waiting', 'In Progress', 'Done', 'Skipped'].map(s => (
                       <option key={s} value={s}>{s}</option>
                     ))}
@@ -546,7 +477,6 @@ const HospitalDashboard = () => {
         </div>
       )}
 
-      {/* ── BED AVAILABILITY ─────────────────────────────────────────────── */}
       {activeTab === 'beds' && (
         <div className="hd-card">
           <div className="hd-card-title-row">
@@ -562,8 +492,6 @@ const HospitalDashboard = () => {
               )}
             </div>
           </div>
-
-          {/* Visual bed meter */}
           <div className="hd-bed-visual">
             <div className="hd-bed-numbers">
               <div className="hd-bed-num hd-bed-available">
@@ -584,44 +512,29 @@ const HospitalDashboard = () => {
                 <span className="hd-bed-sub">Occupied</span>
               </div>
             </div>
-
             {hospitalData.totalBeds > 0 && (
               <div className="hd-bed-bar-wrap">
-                <div
-                  className="hd-bed-bar-fill"
-                  style={{ width: `${Math.round((hospitalData.availableBeds / hospitalData.totalBeds) * 100)}%` }}
-                />
+                <div className="hd-bed-bar-fill"
+                  style={{ width: `${Math.round((hospitalData.availableBeds / hospitalData.totalBeds) * 100)}%` }} />
                 <span className="hd-bed-bar-label">
                   {Math.round((hospitalData.availableBeds / hospitalData.totalBeds) * 100)}% Available
                 </span>
               </div>
             )}
           </div>
-
           {editMode && (
             <div className="hd-bed-edit">
               <label>Available Beds
-                <input
-                  className="hd-input"
-                  type="number" min="0"
-                  value={editedStats.availableBeds ?? 0}
-                  onChange={e => setEditedStats(p => ({ ...p, availableBeds: Number(e.target.value) }))}
-                />
+                <input className="hd-input" type="number" min="0" value={editedStats.availableBeds ?? 0}
+                  onChange={e => setEditedStats(p => ({ ...p, availableBeds: Number(e.target.value) }))} />
               </label>
               <label>Total Beds
-                <input
-                  className="hd-input"
-                  type="number" min="0"
-                  value={editedStats.totalBeds ?? 0}
-                  onChange={e => setEditedStats(p => ({ ...p, totalBeds: Number(e.target.value) }))}
-                />
+                <input className="hd-input" type="number" min="0" value={editedStats.totalBeds ?? 0}
+                  onChange={e => setEditedStats(p => ({ ...p, totalBeds: Number(e.target.value) }))} />
               </label>
             </div>
           )}
-
-          <p className="hd-beds-note">
-            ℹ Bed availability is publicly visible so patients can check before visiting.
-          </p>
+          <p className="hd-beds-note">ℹ Bed availability is publicly visible so patients can check before visiting.</p>
         </div>
       )}
     </div>
