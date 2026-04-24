@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import ReactMarkdown from "react-markdown";
 import "./VaidyaChatbot.css";
+import VaidyaLogo from "./VaidyaLogo";
 
 // ── System prompt for Vaidya ─────────────────────────────────────────────────
 const VAIDYA_SYSTEM_PROMPT = `You are Vaidya, a knowledgeable and compassionate AI health assistant for the MediCare platform.
@@ -187,13 +188,11 @@ const VaidyaChatbot = () => {
         aria-label="Open Vaidya chatbot"
       >
         {open ? (
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{width:22,height:22}}>
             <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
           </svg>
         ) : (
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-          </svg>
+          <VaidyaLogo size={34} variant="white" animated={true} />
         )}
         {!open && <span className="vc-fab-pulse" />}
       </button>
@@ -204,7 +203,7 @@ const VaidyaChatbot = () => {
         {/* Header */}
         <div className="vc-header">
           <div className="vc-header-left">
-            <div className="vc-header-avatar">🩺</div>
+            <div className="vc-header-avatar"><VaidyaLogo size={32} variant="white" animated={false} /></div>
             <div>
               <p className="vc-header-name">Vaidya</p>
               <p className="vc-header-status">
@@ -233,7 +232,7 @@ const VaidyaChatbot = () => {
           {messages.map((msg, i) => <MessageBubble key={i} msg={msg} />)}
           {isTyping && (
             <div className="vc-msg vc-msg--assistant">
-              <div className="vc-avatar"><span>🩺</span></div>
+              <div className="vc-avatar"><VaidyaLogo size={26} variant="color" animated={false} /></div>
               <div className="vc-bubble"><TypingDots /></div>
             </div>
           )}
