@@ -3,10 +3,12 @@ import { Hospital, Mail, Lock } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import './HospitalLogin.css';
 
+const API_BASE = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+
 const HospitalLogin = () => {
   const [formData, setFormData] = useState({ email: '', password: '' });
-  const [error, setError]     = useState('');
-  const [loading, setLoading] = useState(false);
+  const [error, setError]       = useState('');
+  const [loading, setLoading]   = useState(false);
   const navigate = useNavigate();
 
   const handleChange = (e) =>
@@ -29,12 +31,19 @@ const HospitalLogin = () => {
 
     setLoading(true);
     try {
-      // No Authorization header — this IS the login endpoint
-      const response = await fetch('http://localhost:5000/api/auth/hospital/login', {
+      const response = await fetch(`${API_BASE}/api/auth/hospital/login`, { // ✅ FIXED
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
       });
+
+      const contentType = response.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        setError(response.status === 502 || response.status === 503
+          ? 'Server is starting up. Please wait 30 seconds and try again.'
+          : 'Server error. Please try again.');
+        return;
+      }
 
       const data = await response.json();
 
@@ -42,7 +51,6 @@ const HospitalLogin = () => {
         localStorage.setItem('hospitalToken', data.token);
         localStorage.setItem('hospitalName', data.hospitalName);
         localStorage.setItem('userName', data.hospitalName);
-        // Dispatch so Header/other components can react
         window.dispatchEvent(new Event('storage'));
         navigate('/hospital-dashboard');
       } else {
@@ -50,7 +58,7 @@ const HospitalLogin = () => {
       }
     } catch (err) {
       console.error('Login error:', err);
-      setError('Could not connect to server. Please try again.');
+      setError('Cannot reach the server. Please check your connection and try again.');
     } finally {
       setLoading(false);
     }
