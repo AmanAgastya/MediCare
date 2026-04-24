@@ -1,20 +1,18 @@
-## Technologies Used
+# 🏥 MediCare — Full-Stack Healthcare Management Platform
+  OPDs Queue, Bed Allocation in Hospital and Healthcare Management System.
+> A comprehensive healthcare web application that connects patients, hospitals, and doctors on a single platform — enabling appointment booking, queue management, check bed availability, donation coordination, medicine ordering, AI-assisted diagnosis, and a live admin control panel.
 
+## Technologies Used
 - **Frontend**: HTML, CSS, JavaScript, React
 - **Backend**: Node.js, Express
 - **Database**: MongoDB
-- **APIs**: Google Gemini API Key
+- **APIs**: Groq API Key
 - **Deployment**: Netlify, Render
+---
 
 ## Acknowledgments
-
  - **Contributors**:
    -Aman Agastya
-
-# 🏥 MediCare — Full-Stack Healthcare Management Platform
-
-> A comprehensive healthcare web application that connects patients, hospitals, and doctors on a single platform — enabling appointment booking, queue management, check bed availability, donation coordination, medicine ordering, AI-assisted diagnosis, and a live admin control panel.
-
 ---
 
 ## 📋 Table of Contents
@@ -28,7 +26,6 @@
    8. API Reference
    9. Admin Panel
    10. Database Models
-
 ---
 
 ## Project Overview
@@ -36,7 +33,6 @@
 MediCare is a MERN-stack (MongoDB, Express, React, Node.js) healthcare platform with three types of users — **Patients (Users)**, **Hospitals**, and **Doctors** — all managed by a **Super Admin** through a standalone HTML admin panel backed directly by the Express API.
 
 The platform covers the full patient journey: from finding a hospital and booking an appointment, receiving a queue token, consulting a doctor who writes reports and suggests tests, through to ordering medicines and tracking the delivery.
-
 ---
 
 ## Features
@@ -198,7 +194,6 @@ GEMINI_API_KEY=your_gemini_api_key_here
 ```
 
 ### 3 — Create the Super Admin account
-
 Run this **once** to seed the admin user into MongoDB:
 
 ```bash
@@ -361,5 +356,3 @@ Login with the super admin credentials created by `createSuperAdmin.js`.
 
 ### Donation
 `requestType · donationType · hospitalId · donorName · bloodGroup · organType · amountOffered · status · adminNote · matchedWith`
-
----
