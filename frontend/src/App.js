@@ -103,7 +103,6 @@ function App() {
               </Routes>
             </main>
             <Footer />
-            {/* Vaidya AI Chatbot — persists across all pages */}
             <VaidyaChatbot />
           </div>
         </Router>
