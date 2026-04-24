@@ -14,29 +14,26 @@ const aiRoutes           = require('./routes/ai');
 const app = express();
 
 // ── CORS ──────────────────────────────────────────────────────────────────────
+const allowedOrigins = [
+  'http://localhost:3000',
+  'http://localhost:5000',
+  process.env.FRONTEND_URL,        // make sure this is FRONTEND_URL in Render env
+].filter(Boolean);
+
 app.use(cors({
   origin: (origin, cb) => {
-    // Allow requests with no origin (Postman, curl, admin panel same-domain)
-    if (!origin) return cb(null, true);
-
-    const allowed = [
-      'http://localhost:3000',  // local React dev
-      'http://localhost:5000',  // local backend dev
-      process.env.FRONTEND_URL, // e.g. https://medicare-frontend.onrender.com
-    ].filter(Boolean);
-
-    // Allow ANY *.onrender.com subdomain (covers all Render deployments)
+    if (!origin) return cb(null, true);                        // Postman / curl
     const isRender = origin.endsWith('.onrender.com');
-
-    if (allowed.includes(origin) || isRender) {
-      return cb(null, true);
-    }
-
+    if (allowedOrigins.includes(origin) || isRender) return cb(null, true);
     console.warn(`CORS blocked: ${origin}`);
     cb(new Error(`CORS: ${origin} not allowed`));
   },
   credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],        // explicit methods
+  allowedHeaders: ['Content-Type', 'Authorization'],           // explicit headers
 }));
+
+app.options('*', cors());          // ← ADD THIS: handle preflight for all routes
 
 app.use(express.json());
 
