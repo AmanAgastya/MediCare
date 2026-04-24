@@ -4,16 +4,18 @@ import { useNavigate } from 'react-router-dom';
 import { State, City } from 'country-state-city';
 import './HospitalSignup.css';
 
+const API_BASE = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+
 const HospitalSignup = () => {
   const [formData, setFormData] = useState({
     hospitalName: '', email: '', phone: '',
     address: '', adminName: '', password: '',
     confirmPassword: '', state: '', city: '',
   });
-  const [error, setError]   = useState('');
+  const [error, setError]     = useState('');
   const [loading, setLoading] = useState(false);
-  const [states, setStates] = useState([]);
-  const [cities, setCities] = useState([]);
+  const [states, setStates]   = useState([]);
+  const [cities, setCities]   = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -49,8 +51,7 @@ const HospitalSignup = () => {
 
     setLoading(true);
     try {
-      // No Authorization header — hospital doesn't have a token yet at signup
-      const response = await fetch('http://localhost:5000/api/auth/hospital/signup', {
+      const response = await fetch(`${API_BASE}/api/auth/hospital/signup`, { // ✅ FIXED
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -65,6 +66,14 @@ const HospitalSignup = () => {
         }),
       });
 
+      const contentType = response.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        setError(response.status === 502 || response.status === 503
+          ? 'Server is starting up. Please wait 30 seconds and try again.'
+          : 'Server error. Please try again.');
+        return;
+      }
+
       const data = await response.json();
 
       if (response.ok) {
@@ -76,7 +85,7 @@ const HospitalSignup = () => {
       }
     } catch (err) {
       console.error('Signup error:', err);
-      setError('Could not connect to server. Please try again.');
+      setError('Cannot reach the server. Please check your connection and try again.');
     } finally {
       setLoading(false);
     }
