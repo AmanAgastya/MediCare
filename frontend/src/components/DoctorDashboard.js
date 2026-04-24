@@ -4,16 +4,7 @@ import { Stethoscope, Calendar, Users, LogOut, Clock, User, RefreshCw,
   FileText, Save, X, Plus } from 'lucide-react';
 import './DoctorDashboard.css';
 
-const API = 'http://localhost:5000/api/auth/hospital';
-
-/* const STATUS_COLOR = {
-  Pending:  '#f59e0b',
-  Accepted: '#10b981',
-  Running:  '#3b82f6',
-  Done:     '#8b5cf6',
-  Denied:   '#ef4444',
-  Cancelled:'#9ca3af',
-};  */
+const API = `${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/auth/hospital`; // ✅ FIXED
 
 const DoctorDashboard = () => {
   const navigate = useNavigate();
@@ -27,12 +18,10 @@ const DoctorDashboard = () => {
   const [error,        setError]        = useState('');
   const [activeTab,    setActiveTab]    = useState('overview');
 
-  // Report modal state
   const [reportAppt,   setReportAppt]   = useState(null);
   const [reportForm,   setReportForm]   = useState({ diagnosis:'', prescription:'', notes:'', followUpDate:'' });
   const [reportSaving, setReportSaving] = useState(false);
 
-  // Test suggestion state
   const [testApptId,   setTestApptId]   = useState(null);
   const [testName,     setTestName]     = useState('');
   const [testReason,   setTestReason]   = useState('');
@@ -67,7 +56,6 @@ const DoctorDashboard = () => {
 
   useEffect(() => { fetchData(); }, [fetchData]);
 
-  // ── Update appointment status ────────────────────────────────────────────
   const setStatus = async (apptId, status) => {
     try {
       const res = await fetch(`${API}/doctor/appointments/${apptId}/status`, {
@@ -79,7 +67,6 @@ const DoctorDashboard = () => {
     } catch (err) { setError(err.message); }
   };
 
-  // ── Save report ──────────────────────────────────────────────────────────
   const saveReport = async () => {
     setReportSaving(true);
     try {
@@ -94,7 +81,6 @@ const DoctorDashboard = () => {
     setReportSaving(false);
   };
 
-  // ── Add test suggestion ──────────────────────────────────────────────────
   const addTest = async (apptId) => {
     if (!testName.trim()) return;
     try {
@@ -135,7 +121,6 @@ const DoctorDashboard = () => {
 
   return (
     <div className="dd-container">
-      {/* Header */}
       <div className="dd-header">
         <div className="dd-header-left">
           <div className="dd-avatar"><Stethoscope size={28} color="#fff" /></div>
@@ -160,7 +145,6 @@ const DoctorDashboard = () => {
         </div>
       )}
 
-      {/* Stats */}
       <div className="dd-stats">
         <div className="dd-stat"><Calendar size={22} color="#4a90e2" /><span className="dd-stat-num">{appointments.length}</span><span>Total Appts</span></div>
         <div className="dd-stat"><Clock size={22} color="#f59e0b" /><span className="dd-stat-num">{activeQueue.length}</span><span>In Queue Today</span></div>
@@ -168,7 +152,6 @@ const DoctorDashboard = () => {
         <div className="dd-stat"><FileText size={22} color="#8b5cf6" /><span className="dd-stat-num">{appointments.filter(a => a.status === 'Done').length}</span><span>Completed</span></div>
       </div>
 
-      {/* Tabs */}
       <div className="dd-tabs">
         {[
           { id:'overview',     label:'Overview' },
@@ -181,7 +164,6 @@ const DoctorDashboard = () => {
         ))}
       </div>
 
-      {/* ── OVERVIEW ──────────────────────────────────────────────────────── */}
       {activeTab === 'overview' && (
         <div className="dd-card">
           <h2>My Profile</h2>
@@ -196,7 +178,6 @@ const DoctorDashboard = () => {
         </div>
       )}
 
-      {/* ── TODAY'S APPOINTMENTS ──────────────────────────────────────────── */}
       {activeTab === 'appointments' && (
         <div className="dd-card">
           <h2>Today's Appointments ({todayAppts.length})</h2>
@@ -212,7 +193,6 @@ const DoctorDashboard = () => {
         </div>
       )}
 
-      {/* ── ALL APPOINTMENTS ──────────────────────────────────────────────── */}
       {activeTab === 'all' && (
         <div className="dd-card">
           <h2>All Appointments ({appointments.length})</h2>
@@ -228,7 +208,6 @@ const DoctorDashboard = () => {
         </div>
       )}
 
-      {/* ── QUEUE ─────────────────────────────────────────────────────────── */}
       {activeTab === 'queue' && (
         <div className="dd-card">
           <h2>Today's Patient Queue ({activeQueue.length} active)</h2>
@@ -252,7 +231,6 @@ const DoctorDashboard = () => {
         </div>
       )}
 
-      {/* ── REPORT MODAL ──────────────────────────────────────────────────── */}
       {reportAppt && (
         <div style={{ position:'fixed', inset:0, background:'rgba(0,0,0,0.5)', display:'flex',
           alignItems:'center', justifyContent:'center', zIndex:1000, padding:16 }}>
@@ -301,7 +279,6 @@ const DoctorDashboard = () => {
   );
 };
 
-// ── Reusable appointment list sub-component ───────────────────────────────────
 function AppointmentList({ appts, onSetStatus, onOpenReport, onToggleTest,
   testApptId, testName, testReason, testUrgency,
   setTestName, setTestReason, setTestUrgency, onAddTest, onRemoveTest }) {
@@ -315,7 +292,6 @@ function AppointmentList({ appts, onSetStatus, onOpenReport, onToggleTest,
     <div className="dd-appt-list">
       {appts.map(a => (
         <div key={a._id} className="dd-appt-row" style={{ flexDirection:'column', alignItems:'stretch', gap:10 }}>
-          {/* Top row */}
           <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', flexWrap:'wrap', gap:8 }}>
             <div>
               <strong>{a.fullName}</strong>
@@ -350,7 +326,6 @@ function AppointmentList({ appts, onSetStatus, onOpenReport, onToggleTest,
             </div>
           </div>
 
-          {/* Report summary */}
           {a.doctorReport?.diagnosis && (
             <div style={{ background:'#fafaf9', border:'1px solid #e7e5e4', borderRadius:8, padding:'10px 12px', fontSize:13 }}>
               <span style={{ color:'#78716c', fontWeight:700 }}>Diagnosis: </span>{a.doctorReport.diagnosis}
@@ -358,7 +333,6 @@ function AppointmentList({ appts, onSetStatus, onOpenReport, onToggleTest,
             </div>
           )}
 
-          {/* Test suggestions */}
           {a.testSuggestions?.length > 0 && (
             <div style={{ display:'flex', flexWrap:'wrap', gap:6 }}>
               {a.testSuggestions.map(t => (
@@ -374,7 +348,6 @@ function AppointmentList({ appts, onSetStatus, onOpenReport, onToggleTest,
             </div>
           )}
 
-          {/* Add test panel */}
           {testApptId === a._id && (
             <div style={{ display:'flex', gap:6, flexWrap:'wrap', background:'#f8fafc',
               border:'1px solid #e2e8f0', borderRadius:8, padding:'10px 12px' }}>
