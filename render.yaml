@@ -10,7 +10,7 @@ services:
       - key: NODE_ENV
         value: production
       - key: PORT
-        value: 10000
+        value: 5000
       - key: atlas_URI
         sync: false          # fill manually in Render dashboard
       - key: JWT_SECRET
@@ -27,7 +27,7 @@ services:
     runtime: node
     rootDir: frontend
     buildCommand: npm install && npm run build
-    startCommand: npx serve -s build -l 10000
+    startCommand: npx serve -s build -l 5000
     envVars:
       - key: REACT_APP_API_URL
         sync: false          # fill with backend URL e.g. https://medicare-backend.onrender.com
