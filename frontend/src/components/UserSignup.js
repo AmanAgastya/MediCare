@@ -3,13 +3,15 @@ import { UserCircle, Mail, Lock, User, Phone } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import './UserSignup.css';
 
+const API_BASE = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+
 const UserSignup = () => {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [name, setName]                     = useState('');
+  const [email, setEmail]                   = useState('');
+  const [password, setPassword]             = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [phone, setPhone] = useState('');
-  const [error, setError] = useState('');
+  const [phone, setPhone]                   = useState('');
+  const [error, setError]                   = useState('');
   const navigate = useNavigate();
 
   const validateForm = () => {
@@ -40,30 +42,38 @@ const UserSignup = () => {
     e.preventDefault();
     setError('');
 
-    if (!validateForm()) {
-      return;
-    }
+    if (!validateForm()) return;
 
     try {
-      const response = await fetch('http://localhost:5000/api/auth/signup', {
+      const response = await fetch(`${API_BASE}/api/auth/signup`, {  // ✅ FIXED
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, email, password, phone }),
       });
+
+      // ✅ Guard against HTML error pages (Render cold start / 502)
+      const contentType = response.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        setError(
+          response.status === 502 || response.status === 503
+            ? 'Server is starting up. Please wait 30 seconds and try again.'
+            : 'Server returned an unexpected response. Please try again.'
+        );
+        return;
+      }
 
       const data = await response.json();
 
       if (response.ok) {
         localStorage.setItem('token', data.token);
+        localStorage.setItem('userName', data.name);  // ✅ store name for Diagnosis.js
         navigate('/user-login');
       } else {
         setError(data.message || 'An error occurred during signup');
       }
-    } catch (error) {
-      console.error('Error:', error);
-      setError('An error occurred. Please try again.');
+    } catch (err) {
+      console.error('Signup error:', err);
+      setError('Cannot reach the server. Please check your connection and try again.');
     }
   };
 
