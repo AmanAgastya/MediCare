@@ -1,10 +1,10 @@
-const express = require('express');
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const User = require('../models/User');
-const auth = require('../middleware/auth');
-const Appointment = require('../models/Appointment');
-const Hospital = require('../models/Hospital');
+const express      = require('express');
+const bcrypt       = require('bcryptjs');
+const jwt          = require('jsonwebtoken');
+const User         = require('../models/User');
+const auth         = require('../middleware/auth');
+const Appointment  = require('../models/Appointment');
+const Hospital     = require('../models/Hospital');
 
 const router = express.Router();
 
@@ -12,22 +12,24 @@ const router = express.Router();
 router.post('/signup', async (req, res) => {
   try {
     const { name, email, password, phone } = req.body;
+
     let user = await User.findOne({ email });
     if (user) return res.status(400).json({ message: 'User already exists' });
 
-    const salt = await bcrypt.genSalt(10);
+    const salt           = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
+
     user = new User({ name, email, password: hashedPassword, phone });
     await user.save();
 
     const payload = { user: { id: user.id } };
     jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '24h' }, (err, token) => {
-      if (err) throw err;
+      if (err) return res.status(500).json({ message: 'Token generation failed' }); // ✅ JSON
       res.json({ token, name: user.name });
     });
   } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server error');
+    console.error('Signup error:', err.message);
+    res.status(500).json({ message: 'Server error during signup' }); // ✅ JSON not plain text
   }
 });
 
@@ -35,6 +37,7 @@ router.post('/signup', async (req, res) => {
 router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
+
     let user = await User.findOne({ email });
     if (!user) return res.status(400).json({ message: 'Invalid credentials' });
 
@@ -43,12 +46,12 @@ router.post('/login', async (req, res) => {
 
     const payload = { user: { id: user.id, role: user.role, email: user.email } };
     jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '24h' }, (err, token) => {
-      if (err) throw err;
+      if (err) return res.status(500).json({ message: 'Token generation failed' }); // ✅ JSON
       res.json({ token, name: user.name, role: user.role, email: user.email });
     });
   } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server error');
+    console.error('Login error:', err.message);
+    res.status(500).json({ message: 'Server error during login' }); // ✅ JSON not plain text
   }
 });
 
@@ -59,8 +62,8 @@ router.get('/profile', auth, async (req, res) => {
     if (!user) return res.status(404).json({ message: 'User not found' });
     res.json(user);
   } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server Error');
+    console.error('Profile fetch error:', err.message);
+    res.status(500).json({ message: 'Server error fetching profile' });
   }
 });
 
@@ -73,21 +76,21 @@ router.put('/profile', auth, async (req, res) => {
     } = req.body;
 
     const update = {};
-    if (phone !== undefined) update.phone = phone;
-    if (bloodGroup !== undefined) update.bloodGroup = bloodGroup;
-    if (dateOfBirth !== undefined) update.dateOfBirth = dateOfBirth;
-    if (gender !== undefined) update.gender = gender;
-    if (address !== undefined) update.address = address;
-    if (allergies !== undefined) update.allergies = allergies;
-    if (chronicConditions !== undefined) update.chronicConditions = chronicConditions;
+    if (phone              !== undefined) update.phone              = phone;
+    if (bloodGroup         !== undefined) update.bloodGroup         = bloodGroup;
+    if (dateOfBirth        !== undefined) update.dateOfBirth        = dateOfBirth;
+    if (gender             !== undefined) update.gender             = gender;
+    if (address            !== undefined) update.address            = address;
+    if (allergies          !== undefined) update.allergies          = allergies;
+    if (chronicConditions  !== undefined) update.chronicConditions  = chronicConditions;
     if (currentMedications !== undefined) update.currentMedications = currentMedications;
-    if (emergencyContact !== undefined) update.emergencyContact = emergencyContact;
+    if (emergencyContact   !== undefined) update.emergencyContact   = emergencyContact;
 
     const user = await User.findByIdAndUpdate(req.user.id, update, { new: true }).select('-password');
     res.json(user);
   } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server Error');
+    console.error('Profile update error:', err.message);
+    res.status(500).json({ message: 'Server error updating profile' });
   }
 });
 
@@ -99,8 +102,8 @@ router.get('/my-appointments', auth, async (req, res) => {
       .sort({ date: 1, time: 1 });
     res.json(appointments);
   } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server Error');
+    console.error('Appointments fetch error:', err.message);
+    res.status(500).json({ message: 'Server error fetching appointments' });
   }
 });
 
@@ -112,16 +115,16 @@ router.put('/my-appointments/:id', auth, async (req, res) => {
     if (appt.status === 'Accepted') return res.status(400).json({ message: 'Cannot edit an accepted appointment' });
 
     const { date, time, additionalMessage, needsBed } = req.body;
-    if (date) appt.date = date;
-    if (time) appt.time = time;
+    if (date)                          appt.date              = date;
+    if (time)                          appt.time              = time;
     if (additionalMessage !== undefined) appt.additionalMessage = additionalMessage;
-    if (needsBed !== undefined) appt.needsBed = needsBed;
+    if (needsBed          !== undefined) appt.needsBed          = needsBed;
 
     await appt.save();
     res.json(appt);
   } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server Error');
+    console.error('Appointment edit error:', err.message);
+    res.status(500).json({ message: 'Server error editing appointment' });
   }
 });
 
@@ -130,19 +133,20 @@ router.delete('/my-appointments/:id', auth, async (req, res) => {
   try {
     const appt = await Appointment.findOne({ _id: req.params.id, email: req.user.email });
     if (!appt) return res.status(404).json({ message: 'Appointment not found' });
+
     if (appt.status === 'Accepted' && appt.bedAllocated) {
-      // Free up the bed
       await Hospital.findByIdAndUpdate(appt.hospital, { $inc: { availableBeds: 1 } });
     }
+
     await Appointment.findByIdAndDelete(req.params.id);
     res.json({ message: 'Appointment cancelled' });
   } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server Error');
+    console.error('Appointment delete error:', err.message);
+    res.status(500).json({ message: 'Server error cancelling appointment' });
   }
 });
 
-// ─── Get Notifications (bed allocation + queue token) ─────────────────────────
+// ─── Get Notifications ────────────────────────────────────────────────────────
 router.get('/notifications', auth, async (req, res) => {
   try {
     const appointments = await Appointment.find({
@@ -151,8 +155,8 @@ router.get('/notifications', auth, async (req, res) => {
     }).populate('hospital', 'hospitalName city');
     res.json(appointments);
   } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server Error');
+    console.error('Notifications fetch error:', err.message);
+    res.status(500).json({ message: 'Server error fetching notifications' });
   }
 });
 
@@ -167,8 +171,8 @@ router.post('/lab-tests', auth, async (req, res) => {
     await user.save();
     res.status(201).json(user.labTests);
   } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server Error');
+    console.error('Lab test add error:', err.message);
+    res.status(500).json({ message: 'Server error adding lab test' });
   }
 });
 
@@ -181,8 +185,8 @@ router.put('/lab-tests/:testId', auth, async (req, res) => {
     await user.save();
     res.json(user.labTests);
   } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server Error');
+    console.error('Lab test update error:', err.message);
+    res.status(500).json({ message: 'Server error updating lab test' });
   }
 });
 
@@ -193,8 +197,8 @@ router.delete('/lab-tests/:testId', auth, async (req, res) => {
     await user.save();
     res.json(user.labTests);
   } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server Error');
+    console.error('Lab test delete error:', err.message);
+    res.status(500).json({ message: 'Server error deleting lab test' });
   }
 });
 
