@@ -14,8 +14,20 @@ const aiRoutes           = require('./routes/ai');
 const app = express();
 
 // ── Middleware ────────────────────────────────────────────────────────────────
+const ALLOWED_ORIGINS = [
+  'http://localhost:3000',
+  'http://localhost:5000',
+  // Production — update these after deploying
+  process.env.FRONTEND_URL,                          // set in Render dashboard
+  'https://medicare-health.netlify.app',             // replace with your Netlify URL
+].filter(Boolean);
+
 app.use(cors({
-  origin: ['http://localhost:3000', 'http://localhost:5000'],
+  origin: (origin, cb) => {
+    // allow no-origin (Postman, curl, admin panel served from same domain)
+    if (!origin || ALLOWED_ORIGINS.includes(origin)) return cb(null, true);
+    cb(new Error(`CORS: ${origin} not allowed`));
+  },
   credentials: true
 }));
 app.use(express.json());
@@ -35,11 +47,16 @@ app.use("/api/order",         orderRoutes);
 app.use('/api/ai',            aiRoutes);
 
 // Health-check
-app.get('/api/health', (req, res) => res.json({
-  status: 'ok',
-  db: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected',
-  adminPanel: `http://localhost:${process.env.PORT || 5000}/admin`
-}));
+app.get('/api/health', (req, res) => {
+  const host = req.headers.host;
+  const protocol = req.headers['x-forwarded-proto'] || 'http';
+  res.json({
+    status:     'ok',
+    db:         mongoose.connection.readyState === 1 ? 'connected' : 'disconnected',
+    adminPanel: protocol + '://' + host + '/admin',
+    env:        process.env.NODE_ENV || 'development',
+  });
+});
 
 // ── MongoDB ───────────────────────────────────────────────────────────────────
 const connectDB = async () => {
