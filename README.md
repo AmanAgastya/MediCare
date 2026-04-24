@@ -190,7 +190,7 @@ Create `backend/.env`:
 PORT=5000
 atlas_URI=mongodb+srv://<user>:<password>@<cluster>.mongodb.net/?appName=MedCare
 JWT_SECRET=your_strong_secret_here
-GEMINI_API_KEY=your_gemini_api_key_here
+GROQ_API_KEY=your_groq_api_key_here
 ```
 
 ### 3 — Create the Super Admin account
@@ -244,7 +244,7 @@ Frontend runs at `http://localhost:3000`
 | `PORT` | backend/.env | Express server port (default 5000) |
 | `atlas_URI` | backend/.env | MongoDB Atlas connection string |
 | `JWT_SECRET` | backend/.env | Secret key for signing JWTs |
-| `GEMINI_API_KEY` | backend/.env | Google Gemini API key for AI features |
+| `GROQ_API_KEY` | backend/.env | Groq API key for AI features |
 | `REACT_APP_API_URL` | frontend/.env | Base URL for API calls from React |
 
 ---
