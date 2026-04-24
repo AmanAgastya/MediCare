@@ -5,8 +5,8 @@ import { useNavigate } from 'react-router-dom';
 import axios from "axios";
 import './Dashboard.css';
 
-const API     = 'http://localhost:5000/api/auth';
-const DON_API = 'http://localhost:5000/api/donations';
+const API     = (process.env.REACT_APP_API_URL || 'http://localhost:5000') + '/api/auth';
+const DON_API = (process.env.REACT_APP_API_URL || 'http://localhost:5000') + '/api/donations';
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -79,7 +79,7 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/api/order/my-orders", {
+        const res = await axios.get((process.env.REACT_APP_API_URL || "http://localhost:5000") + "/api/order/my-orders", {
           headers: { Authorization: `Bearer ${token}` },
         });
         setOrders(res.data);
