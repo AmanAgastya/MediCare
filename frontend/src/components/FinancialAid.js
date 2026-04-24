@@ -3,7 +3,7 @@ import { IndianRupee, Clock, Heart, Activity, CheckCircle, AlertCircle, LogIn } 
 import { useNavigate } from 'react-router-dom';
 import './FinancialAid.css';
 
-const API = 'http://localhost:5000';
+const API = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 
 const AMOUNTS = [500, 1000, 2500, 5000, 10000];
 
