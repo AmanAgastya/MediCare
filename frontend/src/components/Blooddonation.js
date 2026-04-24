@@ -3,7 +3,7 @@ import { Droplet, Clock, Heart, Activity, CheckCircle, AlertCircle, LogIn } from
 import { useNavigate } from 'react-router-dom';
 import './BloodDonation.css';
 
-const API = 'http://localhost:5000';
+const API = 'https://medicare-backend-s1y1.onrender.com';
 
 const BloodDonation = () => {
   const navigate = useNavigate();
