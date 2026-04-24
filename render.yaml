@@ -1,0 +1,33 @@
+services:
+  # ── Backend (Express + Node.js) ─────────────────────────────────────────
+  - type: web
+    name: medicare-backend
+    runtime: node
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: node server.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: atlas_URI
+        sync: false          # fill manually in Render dashboard
+      - key: JWT_SECRET
+        sync: false          # fill manually in Render dashboard
+      - key: GROQ_API_KEY
+        sync: false          # fill manually in Render dashboard
+      - key: FRONTEND_URL
+        sync: false          # fill after frontend deploys e.g. https://medicare-frontend.onrender.com
+    healthCheckPath: /api/health
+
+  # ── Frontend (React Static Site) ────────────────────────────────────────
+  - type: web
+    name: medicare-frontend
+    runtime: node
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    startCommand: npx serve -s build -l 10000
+    envVars:
+      - key: REACT_APP_API_URL
+        sync: false          # fill with backend URL e.g. https://medicare-backend.onrender.com
