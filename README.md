@@ -12,7 +12,7 @@
 
 ## Acknowledgments
  - **Contributors**:
-   -Aman Agastya
+   -Aman Agastya - amanagastya255@gmail.com
 ---
 
 ## 📋 Table of Contents
@@ -23,9 +23,8 @@
    5. Getting Started
    6. Environment Variables
    7. User Roles & Access
-   8. API Reference
-   9. Admin Panel
-   10. Database Models
+   8. Admin Panel
+   9. Database Models
 ---
 
 ## Project Overview
@@ -235,6 +234,9 @@ npm start
 
 Frontend runs at `http://localhost:3000`
 
+### 7 - The code for Project is Deployment Ready and Deployed on Render.com, it doesn't run on local server.
+Frontend_URL : https://medicare-frontend-qlam.onrender.com/
+Admin Pannel URL : https://medicare-backend-s1y1.onrender.com/admin/
 ---
 
 ## Environment Variables
@@ -257,67 +259,6 @@ Frontend runs at `http://localhost:3000`
 | **Hospital Admin** | `/hospital-login` | Hospital dashboard, queue, doctor management |
 | **Doctor** | `/doctor-login` | Doctor dashboard, patient queue, reports |
 | **Super Admin** | `http://localhost:5000/admin` | Full admin panel |
-
----
-
-## API Reference
-
-### Auth — `/api/auth`
-| Method | Endpoint | Auth | Description |
-|---|---|---|---|
-| POST | `/signup` | — | Register new patient |
-| POST | `/login` | — | Patient login |
-| GET | `/profile` | User | Get own profile |
-| PUT | `/profile` | User | Update profile |
-| GET | `/my-appointments` | User | List own appointments |
-| PUT | `/my-appointments/:id` | User | Edit pending appointment |
-| DELETE | `/my-appointments/:id` | User | Cancel appointment |
-| GET | `/notifications` | User | Queue token & bed notifications |
-| POST | `/lab-tests` | User | Add lab test record |
-| PUT | `/lab-tests/:id` | User | Update lab test |
-| DELETE | `/lab-tests/:id` | User | Delete lab test |
-
-### Hospital Auth — `/api/auth/hospital`
-| Method | Endpoint | Auth | Description |
-|---|---|---|---|
-| POST | `/signup` | — | Register hospital |
-| POST | `/login` | — | Hospital login |
-| POST | `/doctor-login` | — | Doctor login |
-| GET | `/dashboard` | Hospital | Hospital dashboard data |
-| GET | `/appointments` | Hospital | All appointments |
-| PUT | `/appointments/:id/:action` | Hospital | Accept or deny (`accept`/`deny`) |
-| POST | `/add-doctor-with-login` | Hospital | Add doctor with credentials |
-| DELETE | `/remove-doctor/:doctorId` | Hospital | Remove doctor |
-| GET | `/doctor/dashboard` | Doctor | Doctor's queue + appointments |
-| PUT | `/doctor/appointments/:id/status` | Doctor | Set Running or Done |
-| PUT | `/doctor/appointments/:id/report` | Doctor | Write consultation report |
-| POST | `/doctor/appointments/:id/tests` | Doctor | Add test suggestion |
-| DELETE | `/doctor/appointments/:id/tests/:testId` | Doctor | Remove test suggestion |
-| GET | `/queue/:hospitalId` | Public | View hospital queue |
-| POST | `/queue/add` | Hospital | Add patient to queue |
-
-### Admin — `/api/admin`
-| Method | Endpoint | Auth | Description |
-|---|---|---|---|
-| GET | `/users` | Admin | All registered users |
-| DELETE | `/users/:id` | Admin | Delete user |
-| GET | `/orders` | Admin | All medicine orders with user info |
-| PATCH | `/orders/:id/status` | Admin | Update order delivery status |
-| GET | `/hospitals` | Admin | All hospitals |
-| PUT | `/hospitals/:id` | Admin | Approve / revoke hospital |
-| DELETE | `/hospitals/:id` | Admin | Delete hospital |
-| GET | `/feedback` | Admin | All feedback |
-| PUT | `/feedback/:id` | Admin | Reply to feedback |
-| DELETE | `/feedback/:id` | Admin | Delete feedback |
-| GET | `/activity` | Admin | Recent hospital activity log |
-
-### Orders — `/api/order`
-| Method | Endpoint | Auth | Description |
-|---|---|---|---|
-| POST | `/create` | User | Create new medicine order |
-| GET | `/my-orders` | User | Get own orders |
-| GET | `/all` | Admin | All orders (admin) |
-| PATCH | `/:id/status` | Admin | Update order status |
 
 ---
 
