@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './Feedback.css';
 
-const API = 'http://localhost:5000';
+const API = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 
 const Feedback = () => {
   const [form, setForm] = useState({ name: '', email: '', rating: 0, category: 'general', message: '' });
