@@ -38,9 +38,12 @@ const Diagnosis = () => {
     setErrors(p => ({ ...p, [name]: "" }));
   };
 
-  const getDiagnosis = async () => {
-    const API_BASE = process.env.REACT_APP_API_URL || 'http://localhost:5000';
-    const res = await fetch(`${API_BASE}/api/ai/diagnose`, {
+ const getDiagnosis = async () => {
+  const API_BASE = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+  
+  let res;
+  try {
+    res = await fetch(`${API_BASE}/api/ai/diagnose`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -54,10 +57,24 @@ const Diagnosis = () => {
         allergies:          formData.allergies,
       }),
     });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error || 'AI diagnosis failed');
-    return data.text;
-  };
+  } catch (networkErr) {
+  
+    throw new Error('Cannot reach the server. Please check your connection or try again later.');
+  }
+
+  const contentType = res.headers.get('content-type');
+  if (!contentType || !contentType.includes('application/json')) {
+    throw new Error(
+      res.status === 503 || res.status === 502
+        ? 'Server is starting up (Render free tier). Please wait 30 seconds and try again.'
+        : `Server returned an unexpected response (status ${res.status}). Please try again.`
+    );
+  }
+
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || 'AI diagnosis failed');
+  return data.text;
+};
 
   const handleSubmit = async (e) => {
     e.preventDefault();
