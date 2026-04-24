@@ -14,30 +14,35 @@ const aiRoutes           = require('./routes/ai');
 const app = express();
 
 // ── CORS ──────────────────────────────────────────────────────────────────────
+// Reads both casings: Frontend_URL (as set in Render) and FRONTEND_URL
+const FRONTEND_URL = process.env.FRONTEND_URL || process.env.Frontend_URL || '';
+
 const allowedOrigins = [
   'http://localhost:3000',
   'http://localhost:5000',
-  process.env.FRONTEND_URL,        // make sure this is FRONTEND_URL in Render env
+  'https://medicare-frontend-qlam.onrender.com', // exact Render frontend URL
+  FRONTEND_URL,
 ].filter(Boolean);
 
 app.use(cors({
   origin: (origin, cb) => {
-    if (!origin) return cb(null, true);                        // Postman / curl
+    if (!origin) return cb(null, true); // Postman / curl / admin panel same-domain
     const isRender = origin.endsWith('.onrender.com');
     if (allowedOrigins.includes(origin) || isRender) return cb(null, true);
     console.warn(`CORS blocked: ${origin}`);
     cb(new Error(`CORS: ${origin} not allowed`));
   },
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],        // explicit methods
-  allowedHeaders: ['Content-Type', 'Authorization'],           // explicit headers
+  methods:        ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
 }));
 
-app.options('*', cors());          // ← ADD THIS: handle preflight for all routes
+// Handle preflight requests for all routes
+app.options('*', cors());
 
 app.use(express.json());
 
-// ── Serve Admin Panel ─────────────────────────────────────────────────────────
+// ── Admin Panel ───────────────────────────────────────────────────────────────
 app.use('/admin', express.static(path.join(__dirname, 'public')));
 app.get('/admin', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'admin-panel.html'));
@@ -60,18 +65,16 @@ app.get('/api/health', (req, res) => {
     db:          mongoose.connection.readyState === 1 ? 'connected' : 'disconnected',
     adminPanel:  `${protocol}://${host}/admin`,
     env:         process.env.NODE_ENV || 'development',
-    frontendUrl: process.env.FRONTEND_URL || 'not set',
+    frontendUrl: FRONTEND_URL || 'not set',
   });
 });
 
 // ── MongoDB ───────────────────────────────────────────────────────────────────
 const connectDB = async () => {
-  const uri = process.env.atlas_URI;
-  if (!uri || !uri.trim()) {
-    console.error('❌  atlas_URI not set in .env'); process.exit(1);
-  }
+  const uri = (process.env.atlas_URI || '').trim();
+  if (!uri) { console.error('❌  atlas_URI not set in .env'); process.exit(1); }
   try {
-    await mongoose.connect(uri.trim(), {
+    await mongoose.connect(uri, {
       serverSelectionTimeoutMS: 10000,
       socketTimeoutMS:          45000,
     });
@@ -90,8 +93,8 @@ mongoose.connection.on('error', err   => console.error('❌  MongoDB error:', er
 const PORT = process.env.PORT || 5000;
 connectDB().then(() => {
   app.listen(PORT, '0.0.0.0', () => {
-    console.log(`🚀  Server running on port ${PORT}`);
-    console.log(`🖥️   Admin Panel → http://localhost:${PORT}/admin`);
-    console.log(`🌐  FRONTEND_URL → ${process.env.FRONTEND_URL || 'not set'}`);
+    console.log(`🚀  Server on port ${PORT}`);
+    console.log(`🖥️   Admin → http://localhost:${PORT}/admin`);
+    console.log(`🌐  Frontend URL → ${FRONTEND_URL || 'not set (*.onrender.com wildcard active)'}`);
   });
 });
