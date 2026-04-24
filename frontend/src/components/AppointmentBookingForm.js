@@ -3,7 +3,7 @@ import axios from 'axios';
 import { State, City } from 'country-state-city';
 import './AppointmentBookingForm.css';
 
-const API_BASE_URL = 'http://localhost:5000/api/auth/hospital';
+const API_BASE_URL = 'https://medicare-backend-s1y1.onrender.com/api/auth/hospital';
 
 // Static hospital list (same as Home.js — shown when not in DB)
 const STATIC_HOSPITALS = [
