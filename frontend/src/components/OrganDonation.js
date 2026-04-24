@@ -3,7 +3,7 @@ import { Heart, Clock, UserPlus, Activity, CheckCircle, AlertCircle, LogIn } fro
 import { useNavigate } from 'react-router-dom';
 import './OrganDonation.css';
 
-const API = 'http://localhost:5000';
+const API = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 
 const ORGANS = ['kidney','liver','heart','lungs','cornea','bone_marrow','pancreas','intestine','other'];
 
