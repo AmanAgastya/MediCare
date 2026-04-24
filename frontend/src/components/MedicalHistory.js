@@ -7,7 +7,7 @@ import {
 } from 'lucide-react';
 import './MedicalHistory.css';
 
-const API = 'http://localhost:5000/api/auth';
+const API = (process.env.REACT_APP_API_URL || 'http://localhost:5000') + '/api/auth';
 
 const BLOOD_GROUPS    = ['Unknown','A+','A-','B+','B-','AB+','AB-','O+','O-'];
 const GENDER_OPTIONS  = ['','Male','Female','Other'];
