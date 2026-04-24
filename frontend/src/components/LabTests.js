@@ -6,7 +6,7 @@ import {
 } from 'lucide-react';
 import './LabTests.css';
 
-const API = 'http://localhost:5000/api/auth';
+const API = (process.env.REACT_APP_API_URL || 'http://localhost:5000') + '/api/auth';
 
 // Common lab tests catalogue
 const COMMON_TESTS = [
