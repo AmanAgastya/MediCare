@@ -1,4 +1,4 @@
-# 🏥 MediCare — Full-Stack Healthcare Management Platform
+# 🏥 MediCare — MERN Full-Stack Healthcare Management Platform
   OPDs Queue, Bed Allocation in Hospital and Healthcare Management System.
 > A comprehensive healthcare web application that connects patients, hospitals, and doctors on a single platform — enabling appointment booking, queue management, check bed availability, donation coordination, medicine ordering, AI-assisted diagnosis, and a live admin control panel.
 
