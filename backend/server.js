@@ -19,7 +19,7 @@ const ALLOWED_ORIGINS = [
   'http://localhost:5000',
   // Production — update these after deploying
   process.env.FRONTEND_URL,                          // set in Render dashboard
-  'https://medicare-health.netlify.app',             // replace with your Netlify URL
+  'https://medicare-frontend-qlam.onrender.com/',             // replace with your frontend Render URL
 ].filter(Boolean);
 
 app.use(cors({
