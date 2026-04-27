@@ -12,7 +12,7 @@
 
 ## Acknowledgments
  - **Contributors**:
-   -Aman Agastya - amanagastya255@gmail.com
+   -Aman Agastya - amanagastya0709@gmail.com
 ---
 The code for Project is Deployment Ready and Deployed on Render.com, it doesn't run on local server.
 
