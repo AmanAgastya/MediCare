@@ -26,11 +26,9 @@ Admin Pannel URL : https://medicare-backend-s1y1.onrender.com/admin/
    2. Features
    3. Tech Stack
    4. Project Structure
-   5. Getting Started
-   6. Environment Variables
-   7. User Roles & Access
-   8. Admin Panel
-   9. Database Models
+   5. Environment Variables
+   6. User Roles & Access
+   7. Admin Panel
 ---
 
 ## Project Overview
@@ -166,82 +164,6 @@ MediCare/
     │   └── App.js               # Routes
     └── .env
 ```
-
----
-
-## Getting Started
-
-### Prerequisites
-- **Node.js** v18 or higher
-- **npm** v9 or higher
-- A **MongoDB Atlas** account (free tier works)
-
-### 1 — Clone the repository
-
-```bash
-git clone <your-repo-url>
-cd MediCare
-```
-
-### 2 — Set up the backend
-
-```bash
-cd backend
-npm install
-```
-
-Create `backend/.env`:
-```env
-PORT=5000
-atlas_URI=mongodb+srv://<user>:<password>@<cluster>.mongodb.net/?appName=MedCare
-JWT_SECRET=your_strong_secret_here
-GROQ_API_KEY=your_groq_api_key_here
-```
-
-### 3 — Create the Super Admin account
-Run this **once** to seed the admin user into MongoDB:
-
-```bash
-node scripts/createSuperAdmin.js
-```
-
-This creates:
-- **Email:** `admin@medicare.com`
-- **Password:** `admin123` *(change immediately after first login)*
-
-### 4 — Start the backend
-
-```bash
-node server.js
-# or with auto-reload:
-npx nodemon server.js
-```
-
-Server starts at `http://localhost:5000`
-Admin panel at `http://localhost:5000/admin`
-
-### 5 — Set up the frontend
-
-```bash
-cd ../frontend
-npm install
-```
-
-Create `frontend/.env`:
-```env
-REACT_APP_API_URL=http://localhost:5000
-```
-
-### 6 — Start the frontend
-
-```bash
-npm start
-```
-
-Frontend runs at `http://localhost:3000`
-
----
-
 ## Environment Variables
 
 | Variable | File | Description |
@@ -261,13 +183,13 @@ Frontend runs at `http://localhost:3000`
 | **User / Patient** | `/user-login` | Dashboard, appointments, store, donations |
 | **Hospital Admin** | `/hospital-login` | Hospital dashboard, queue, doctor management |
 | **Doctor** | `/doctor-login` | Doctor dashboard, patient queue, reports |
-| **Super Admin** | `http://localhost:5000/admin` | Full admin panel |
+| **Super Admin** | `https://medicare-backend-s1y1.onrender.com/admin` | Full admin panel |
 
 ---
 
 ## Admin Panel
 
-Access: **`http://localhost:5000/admin`**
+Access: **`https://medicare-backend-s1y1.onrender.com/admin`**
 
 Login with the super admin credentials created by `createSuperAdmin.js`.
 
@@ -283,20 +205,3 @@ Login with the super admin credentials created by `createSuperAdmin.js`.
 | **Activity Log** | Hospital registration and approval timeline |
 
 ---
-
-## Database Models
-
-### User
-`name · email · password · phone · role · bloodGroup · dateOfBirth · gender · address · allergies[] · chronicConditions[] · currentMedications[] · emergencyContact{} · labTests[]`
-
-### Hospital
-`hospitalName · email · password · phone · address · state · city · doctors[] · queue[] · doctorTokenCounters[] · availableBeds · totalBeds · accepted`
-
-### Appointment
-`fullName · email · phoneNumber · date · time · hospital · doctor{} · status · queueToken · bedAllocated · doctorReport{} · testSuggestions[]`
-
-### Order
-`user · items[] · totalAmount · address{} · paymentMethod · paymentStatus · orderStatus`
-
-### Donation
-`requestType · donationType · hospitalId · donorName · bloodGroup · organType · amountOffered · status · adminNote · matchedWith`
