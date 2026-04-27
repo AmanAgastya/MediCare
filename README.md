@@ -240,9 +240,6 @@ npm start
 
 Frontend runs at `http://localhost:3000`
 
-### 7 - The code for Project is Deployment Ready and Deployed on Render.com, it doesn't run on local server.
-Frontend_URL : https://medicare-frontend-qlam.onrender.com/
-     Admin Pannel URL : https://medicare-backend-s1y1.onrender.com/admin/
 ---
 
 ## Environment Variables
