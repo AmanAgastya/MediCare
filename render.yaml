@@ -12,13 +12,13 @@ services:
       - key: PORT
         value: 10000
       - key: atlas_URI
-        sync: false          # fill manually in Render dashboard
+        sync: false 
       - key: JWT_SECRET
-        sync: false          # fill manually in Render dashboard
+        sync: false 
       - key: GROQ_API_KEY
-        sync: false          # fill manually in Render dashboard
+        sync: false 
       - key: FRONTEND_URL
-        sync: false          # fill after frontend deploys e.g. https://medicare-frontend.onrender.com
+        sync: false   
     healthCheckPath: /api/health
 
   # ── Frontend (React Static Site) ────────────────────────────────────────
@@ -30,4 +30,4 @@ services:
     startCommand: npx serve -s build -l 10000
     envVars:
       - key: REACT_APP_API_URL
-        sync: false          # fill with backend URL e.g. https://medicare-backend.onrender.com
+        sync: false 
