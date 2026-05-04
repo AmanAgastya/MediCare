@@ -1,17 +1,3 @@
-// src/components/Checkout.js
-// FIXES:
-//  1. Was re-reading cart from localStorage on its own — now uses CartContext
-//     (avoids stale/out-of-sync data between MedStore and Checkout)
-//  2. Auth guard was: if(!localStorage.getItem("token")) — unreliable race condition
-//     on first load; now uses useAuth() context which is already bootstrapped
-//  3. "Fill all required fields" alert only checked name+address — phone, city,
-//     pincode were silently ignored; full validation added
-//  4. address was saved as a JS object to localStorage but Payment.js expected
-//     it as such — kept consistent; added JSON.stringify guard
-//  5. Redirect-from state preserved so login → back to checkout works
-//  6. Missing CSS class for "item" layout fixed inline (was display:flex but
-//     CSS file had no specificity for nested .item inside .summary-card)
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
