@@ -85,7 +85,7 @@ const Dashboard = () => {
     if (!token) return;
     setFbLoading(true); setFbError('');
     try {
-      const res = await fetch((process.env.REACT_APP_API_URL || 'http://localhost:5000') + '/api/admin/feedback/my-feedback';
+      const res = await fetch((process.env.REACT_APP_API_URL || 'http://localhost:5000') + '/api/admin/feedback/my-feedback',{
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }
       });
       if (!res.ok) throw new Error('Failed to load feedbacks');
