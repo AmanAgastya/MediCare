@@ -2,12 +2,12 @@
 
 .hospital-login-container {
   display: flex;
-  margin-top:35px;
+  margin-top:30px;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
   background-color: var(--feature-background);
-  padding: 10rem;
+  padding: 8rem;
 }
 
 .hospital-login-content {
