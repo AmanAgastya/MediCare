@@ -11,6 +11,7 @@
 .user-login-container {
   display: flex;
   margin-top:40px;
+  padding:10rem;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
