@@ -1,4 +1,4 @@
-.dd-container { height: 30px; max-width: 800px; margin: 10px auto; padding: 0 16px 40px; }
+.dd-container {max-width: 800px; margin: 20px auto; padding: 0 16px 40px; }
 
 .dd-loading { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 60vh; gap: 14px; }
 .dd-spinner { width: 40px; height: 40px; border: 4px solid #e5e7eb; border-top-color: #4a90e2; border-radius: 50%; animation: spin 0.8s linear infinite; }
@@ -8,7 +8,7 @@
   display: flex; justify-content: space-between; align-items: center;
   background: linear-gradient(135deg, #4a90e2, #357abd);
   color: white; padding: 24px; border-radius: 12px; margin-bottom: 18px;
-  padding-top: 120px;
+  padding-top: 120px; height: 20px;
   box-shadow: 0 6px 20px rgba(74,144,226,0.3);
 }
 .dd-header-left { display: flex; align-items: center; gap: 16px; }
