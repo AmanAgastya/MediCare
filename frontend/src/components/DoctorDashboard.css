@@ -1,4 +1,4 @@
-.dd-container { max-width: 800px; margin: 40px auto; padding: 0 16px 40px; }
+.dd-container { height: 30px; max-width: 800px; margin: 10px auto; padding: 0 16px 40px; }
 
 .dd-loading { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 60vh; gap: 14px; }
 .dd-spinner { width: 40px; height: 40px; border: 4px solid #e5e7eb; border-top-color: #4a90e2; border-radius: 50%; animation: spin 0.8s linear infinite; }
@@ -14,7 +14,7 @@
 .dd-header-left { display: flex; align-items: center; gap: 16px; }
 .dd-avatar { background: rgba(255,255,255,0.2); width: 56px; height: 56px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
 .dd-title { font-size: 1.5rem; margin: 0; color: black;}
-.dd-sub { font-size: 0.9rem; opacity: 0.85; margin: 4px 0 0; }
+.dd-sub { font-size: 0.9rem; opacity: 0.85; margin: 0; }
 .dd-logout { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.4); color: white; padding: 8px 16px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 6px; font-size: 0.9rem; transition: background 0.2s; }
 .dd-logout:hover { background: rgba(255,255,255,0.3); }
 
